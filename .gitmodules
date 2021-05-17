@@ -1,0 +1,9 @@
+[submodule "lib/classic"]
+	path = lib/classic
+	url = https://github.com/hammahutz/classic.git
+[submodule "lib/lume"]
+	path = lib/lume
+	url = https://github.com/hammahutz/lume.git
+[submodule "lib/lurker"]
+	path = lib/lurker
+	url = https://github.com/hammahutz/lurker.git
