@@ -5,6 +5,4 @@ function Vector:new(x, y)
     self.y = y or 0
 end
 
-
-
 return Vector
