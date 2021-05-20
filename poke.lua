@@ -22,30 +22,46 @@ function Poke:RayVsRect(ray_orgin, ray_dir, rect_target)
     t_near.x = (rect_target.pos.x - ray_orgin.x) / ray_dir.x
     t_near.y = (rect_target.pos.y - ray_orgin.y) / ray_dir.y
 
-    print(t_near.y)
+    print(t_near.x .. " " .. t_near.y)
 
-    t_far.x =(rect_target.pos.x + rect_target.size.x - ray_orgin.x) / ray_dir.x
-    t_far.y =(rect_target.pos.y + rect_target.size.y - ray_orgin.y) / ray_dir.y
+    t_far.x = (rect_target.pos.x + rect_target.size.x - ray_orgin.x) / ray_dir.x
+    t_far.y = (rect_target.pos.y + rect_target.size.y - ray_orgin.y) / ray_dir.y
 
-    if (t_near.x > t_far.x) then t_near.x, t_far.x = self:Swap(t_near.x, t_far.x) end
-    if (t_near.y > t_far.y) then t_near.y, t_far.y = self:Swap(t_near.y, t_far.y) end
+    if (t_near.x > t_far.x) then
+        t_near.x, t_far.x = self:Swap(t_near.x, t_far.x)
+    end
+    if (t_near.y > t_far.y) then
+        t_near.y, t_far.y = self:Swap(t_near.y, t_far.y)
+    end
 
     --Om en kollision inte inträffar
-    if (t_near.x > t_far.y or t_near.y > t_far.x) then return false end
+    if (t_near.x > t_far.y or t_near.y > t_far.x) then
+        return false
+    end
 
     local t_hit_near = math.max(t_near.x, t_near.y)
     local t_hit_far = math.min(t_far.x, t_far.y)
 
     --Om träffen är bakom vectorn
-    if t_hit_far<0 then  return false end
-    
+    if t_hit_far < 0 then
+        return false
+    end
+
     local contact_point = Vector(ray_orgin.x + t_hit_near * ray_dir.x, ray_orgin.y + t_hit_near * ray_dir.y)
     local contact_normal = Vector()
 
-    if t_near.x > t_near.y then 
-        if ray_dir.x < 0 then contact_normal = Vector(1, 0) else contact_normal = Vector(-1, 0) end
+    if t_near.x > t_near.y then
+        if ray_dir.x < 0 then
+            contact_normal = Vector(1, 0)
+        else
+            contact_normal = Vector(-1, 0)
+        end
     elseif t_near.x < t_near.y then
-        if ray_dir.y < 0 then contact_normal = Vector(0, 1) else contact_normal = Vector(0, -1) end
+        if ray_dir.y < 0 then
+            contact_normal = Vector(0, 1)
+        else
+            contact_normal = Vector(0, -1)
+        end
     end
 
     print(t_hit_near)
