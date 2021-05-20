@@ -1,6 +1,6 @@
-Object = require "library.classic.classic"
-Lume = require "library.lume.lume"
-Lurker = require "library.lurker.lurker"
+Object = require "/lib/classic/classic"
+Lume = require "/lib/lume/lume"
+Lurker = require "/lib/lurker/lurker"
 
 Vector = require "Vector"
 Rect = require "Rectangle"
