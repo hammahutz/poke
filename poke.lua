@@ -1,3 +1,5 @@
+Vector = require "Vector"
+
 local Poke = {}
 
 function Poke:new()
@@ -16,59 +18,50 @@ function Poke:RectVsRect(rect1, rect2)
 end
 
 function Poke:RayVsRect(ray_orgin, ray_dir, rect_target)
-    local t_near = Vector()
-    local t_far = Vector()
 
-    t_near.x = (rect_target.pos.x - ray_orgin.x) / ray_dir.x
-    t_near.y = (rect_target.pos.y - ray_orgin.y) / ray_dir.y
+    local t_near = (rect_target.pos - ray_orgin) / ray_dir
+    local t_far = (rect_target.pos + rect_target.size - ray_orgin) / ray_dir
 
-    print(t_near.x .. " " .. t_near.y)
+    if (t_near.x > t_far.x) then t_near.x, t_far.x = self:Swap(t_near.x, t_far.x) end
+    if (t_near.y > t_far.y) then t_near.y, t_far.y = self:Swap(t_near.y, t_far.y) end
 
-    t_far.x = (rect_target.pos.x + rect_target.size.x - ray_orgin.x) / ray_dir.x
-    t_far.y = (rect_target.pos.y + rect_target.size.y - ray_orgin.y) / ray_dir.y
-
-    if (t_near.x > t_far.x) then
-        t_near.x, t_far.x = self:Swap(t_near.x, t_far.x)
-    end
-    if (t_near.y > t_far.y) then
-        t_near.y, t_far.y = self:Swap(t_near.y, t_far.y)
-    end
-
-    --Om en kollision inte inträffar
-    if (t_near.x > t_far.y or t_near.y > t_far.x) then
-        return false
-    end
+    if (t_near.x > t_far.y or t_near.y > t_far.x) then return false end
 
     local t_hit_near = math.max(t_near.x, t_near.y)
     local t_hit_far = math.min(t_far.x, t_far.y)
 
     --Om träffen är bakom vectorn
-    if t_hit_far < 0 then
+    if t_hit_far < 0 then return false end
+
+    local contact_point = ray_orgin + t_hit_near * ray_dir
+    local contact_normal = Vector()
+
+    if t_near.x > t_near.y then 
+        if ray_dir.x < 0 then contact_normal:setRIGHT() 
+        else contact_normal:setLEFT() end
+
+    elseif t_near.x < t_near.y then
+        if ray_dir.y < 0 then contact_normal:setDOWN()
+        else contact_normal:setUP() end
+    end
+
+    if t_hit_near < 1 then return true, contact_point, contact_normal, t_hit_near end
+
+    return false
+end
+
+function Poke:DynamicRectVsRect(rect_in, rect_target)
+    if rect_in.velocity.x == 0 and rect_in.velocity.y == 0 then
         return false
     end
 
-    local contact_point = Vector(ray_orgin.x + t_hit_near * ray_dir.x, ray_orgin.y + t_hit_near * ray_dir.y)
-    local contact_normal = Vector()
+    local expanded_traget =
+        Rect(
+        Vector(rect_target.pos.x - rect_in.size.x / 2, rect_target.pos.x - rect_in.size.x / 2),
+        Vector(rect_target.size.x + rect_in.size.x, rect_target.size.y + rect_in.size.y)
+    )
 
-    if t_near.x > t_near.y then
-        if ray_dir.x < 0 then
-            contact_normal = Vector(1, 0)
-        else
-            contact_normal = Vector(-1, 0)
-        end
-    elseif t_near.x < t_near.y then
-        if ray_dir.y < 0 then
-            contact_normal = Vector(0, 1)
-        else
-            contact_normal = Vector(0, -1)
-        end
-    end
-
-    print(t_hit_near)
-    if t_hit_near < 1 then
-        return true, contact_point, contact_normal, t_hit_near
-    end
-    return false
+    --if self:RayVsRect()
 end
 
 function Poke:Swap(value1, value2)

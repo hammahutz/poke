@@ -15,20 +15,41 @@ function love.load()
     rayPoint = Vector(50, 50)
     rayDirection = Vector(love.mouse.getX() - rayPoint.x, love.mouse.getY() - rayPoint.y)
     rect1 = Rect(Vector(200, 200), Vector(50, 50))
+    rect2 = Rect(Vector(400, 400), Vector(50, 50))
 
     isHit, contact_point, contact_normal, t_hit_near = Poke:RayVsRect(rayPoint, rayDirection, rect1)
+
+    g = Vector(1, 1)
+    h = Vector(2, 3)
+    d = Vector(1, 1)
+
+    print(g:getDot(h, d))
 end
 
 function love.update(dt)
     Lurker.update()
 
-    rayPoint = Vector(10, 400)
     rayDirection = Vector(love.mouse.getX() - rayPoint.x, love.mouse.getY() - rayPoint.y)
     rect1 = Rect(Vector(200, 200), Vector(50, 50))
 
     isHit, contact_point, contact_normal, t_hit_near = Poke:RayVsRect(rayPoint, rayDirection, rect1)
 
+    Poke:DynamicRectVsRect(rect1, rect2)
+
     rayDirection = Vector(love.mouse.getX(), love.mouse.getY())
+
+    if love.keyboard.isDown("w") then
+        rayPoint.y = rayPoint.y - 100 * dt
+    end
+    if love.keyboard.isDown("d") then
+        rayPoint.x = rayPoint.x + 100 * dt
+    end
+    if love.keyboard.isDown("s") then
+        rayPoint.y = rayPoint.y + 100 * dt
+    end
+    if love.keyboard.isDown("a") then
+        rayPoint.x = rayPoint.x - 100 * dt
+    end
 end
 
 function love.draw()
@@ -55,5 +76,6 @@ function love.draw()
     end
 
     rect1:draw()
+    rect2:draw()
     love.graphics.line(rayPoint.x, rayPoint.y, rayDirection.x, rayDirection.y)
 end
